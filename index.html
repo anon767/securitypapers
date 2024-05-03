@@ -113,6 +113,8 @@ function displayPapers(papers) {
             <h3 onclick="searchTitle('${paper.info.title.replace(/'/g, "\\'")}')">${paper.info.title}</h3>
             <p>Authors: ${authors}</p>
             <p>Venue: ${paper.info.venue}, Year: ${paper.info.year}</p>
+            <button onclick="excludePaper(${index})">Exclude</button>
+
         </div>`;
         papersDisplay.innerHTML += paperHtml;
     });
