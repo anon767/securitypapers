@@ -98,9 +98,7 @@
 function displayPapers(papers) {
     const papersDisplay = document.getElementById('papersDisplay');
     papersDisplay.innerHTML = '';
-    papers.forEach((paper,index) => {
-            console.log(paper.info, paper.info.authors , paper.info.year , parseInt(paper.info.year), parseInt(paper.info.year) >= 2023);
-    });
+
    
     papers.filter(paper => paper.info && paper.info.authors && paper.info.year && parseInt(paper.info.year) >= 2023).forEach((paper, index) => {
         let authors = '';
