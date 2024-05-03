@@ -90,6 +90,7 @@
                     .then(response => response.json())
                     .then(data => {
                         allPapers = data.result.hits.hit || [];
+                        console.log(allPapers);
                         filterExcludedPapers(); // Filter out excluded papers before displaying
                     })
                     .catch(error => console.error('Error fetching papers:', error));
