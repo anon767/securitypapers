@@ -129,6 +129,9 @@ function displayPapers(papers) {
         }
 
         function filterPapersByKeyword() {
+            if (arr.length === 0) {
+                fetchPapers();
+            }
             const keyword = document.getElementById('searchKeyword').value.toLowerCase();
             const filteredPapers = allPapers.filter(paper => 
                 paper.info.title.toLowerCase().includes(keyword)
