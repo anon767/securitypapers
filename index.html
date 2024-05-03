@@ -124,9 +124,7 @@ function displayPapers(papers) {
 
         function filterExcludedPapers() {
             const excludedPapers = JSON.parse(localStorage.getItem('excludedPapers') || '[]');
-            const filteredPapers = allPapers.filter(paper => 
-                !excludedPapers.some(excluded => excluded.info.doi === paper.info.doi) // Assumes DOI as unique identifier
-            );
+            const filteredPapers = allPapers.filter(paper => !excludedPapers.includes(paper["@id"])); // Assumes DOI as unique identifier
             displayPapers(filteredPapers);
         }
 
@@ -140,7 +138,7 @@ function displayPapers(papers) {
 
         function excludePaper(index) {
             const excludedPapers = JSON.parse(localStorage.getItem('excludedPapers') || '[]');
-            const paperToExclude = allPapers[index];
+            const paperToExclude = allPapers[index]["@id"];
             excludedPapers.push(paperToExclude);
             localStorage.setItem('excludedPapers', JSON.stringify(excludedPapers));
             allPapers.splice(index, 1);
