@@ -98,8 +98,10 @@
 function displayPapers(papers) {
     const papersDisplay = document.getElementById('papersDisplay');
     papersDisplay.innerHTML = '';
-    paper = papers[0];
-    console.log(paper.info, paper.info.authors , paper.info.year , parseInt(paper.info.year), parseInt(paper.info.year) >= 2023);
+    papers.forEach((paper,index) => {
+            console.log(paper.info, paper.info.authors , paper.info.year , parseInt(paper.info.year), parseInt(paper.info.year) >= 2023);
+    }
+   
     papers.filter(paper => paper.info && paper.info.authors && paper.info.year && parseInt(paper.info.year) >= 2023).forEach((paper, index) => {
         let authors = '';
         if (paper.info.authors && paper.info.authors.author) {
