@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBLP Conference Papers Fetcher</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        select, input[type="text"] {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 15px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .paper {
+            background-color: white;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .paper h3 {
+            cursor: pointer;
+            color: #007bff;
+        }
+        .paper h3:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>DBLP Conference Papers Fetcher</h1>
+    <select id="conferenceSelector">
+        <option value="">All Conferences</option>
+        <option value="sp">IEEE S&P</option>
+        <option value="ccs">CCS</option>
+        <option value="ndss">NDSS</option>
+        <option value="uss">USENIX</option>
+    </select>
+    <button onclick="fetchPapers()">Fetch Papers</button>
+    <input type="text" id="searchKeyword" placeholder="Enter keyword">
+    <button onclick="filterPapersByKeyword()">Search by Keyword</button>
+    <div id="papersDisplay"></div>
+
+    <script>
+        const conferenceUrls = {
+            sp: 'https://dblp.org/search/publ/api?q=stream%3Astreams%2Fconf%2Fsp%3A&h=1000&format=json',
+            ccs: 'https://dblp.org/search/publ/api?q=stream%3Astreams%2Fconf%2Fccs%3A&h=1000&format=json',
+            ndss: 'https://dblp.org/search/publ/api?q=stream%3Astreams%2Fconf%2Fndss%3A&h=1000&format=json',
+            uss: 'https://dblp.org/search/publ/api?q=stream%3Astreams%2Fconf%2Fuss%3A&h=1000&format=json'
+        };
+        let allPapers = [];
+
+        function fetchPapers() {
+            const conference = document.getElementById('conferenceSelector').value;
+            if (!conference) {
+                // Fetch from all conferences if none is selected
+                allPapers = [];
+                Promise.all(Object.values(conferenceUrls).map(url =>
+                    fetch(url).then(response => response.json())
+                )).then(results => {
+                    results.forEach(result => {
+                        allPapers = allPapers.concat(result.result.hits.hit || []);
+                    });
+                    filterExcludedPapers(); // Filter out excluded papers before displaying
+                }).catch(error => console.error('Error fetching papers:', error));
+            } else {
+                const url = conferenceUrls[conference];
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        allPapers = data.result.hits.hit || [];
+                        filterExcludedPapers(); // Filter out excluded papers before displaying
+                    })
+                    .catch(error => console.error('Error fetching papers:', error));
+            }
+        }
+        function displayPapers(papers) {
+            const papersDisplay = document.getElementById('papersDisplay');
+            papersDisplay.innerHTML = '';
+            papers.forEach((paper, index) => {
+                const paperHtml = `<div class="paper">
+                    <h3 onclick="searchTitle('${paper.info.title.replace(/'/g, "\\'")}')">${paper.info.title}</h3>
+                    <p>Authors: ${paper.info.authors.author.map(a => a.text).join(', ')}</p>
+                    <p>Venue: ${paper.info.venue}, Year: ${paper.info.year}</p>
+                    <button onclick="excludePaper(${index})">Exclude</button>
+                </div>`;
+                papersDisplay.innerHTML += paperHtml;
+            });
+        }
+        function filterExcludedPapers() {
+            const excludedPapers = JSON.parse(localStorage.getItem('excludedPapers') || '[]');
+            const filteredPapers = allPapers.filter(paper => 
+                !excludedPapers.some(excluded => excluded.info.doi === paper.info.doi) // Assumes DOI as unique identifier
+            );
+            displayPapers(filteredPapers);
+        }
+
+        function filterPapersByKeyword() {
+            const keyword = document.getElementById('searchKeyword').value.toLowerCase();
+            const filteredPapers = allPapers.filter(paper => 
+                paper.info.title.toLowerCase().includes(keyword)
+            );
+            displayPapers(filteredPapers);
+        }
+
+        function excludePaper(index) {
+            const excludedPapers = JSON.parse(localStorage.getItem('excludedPapers') || '[]');
+            const paperToExclude = allPapers[index];
+            excludedPapers.push(paperToExclude);
+            localStorage.setItem('excludedPapers', JSON.stringify(excludedPapers));
+            allPapers.splice(index, 1);
+            displayPapers(allPapers);
+        }
+    </script>
+</body>
+</html>
+
