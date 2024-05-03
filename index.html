@@ -95,19 +95,25 @@
                     .catch(error => console.error('Error fetching papers:', error));
             }
         }
+
         function displayPapers(papers) {
             const papersDisplay = document.getElementById('papersDisplay');
             papersDisplay.innerHTML = '';
-            papers.forEach((paper, index) => {
+            papers.filter(paper => parseInt(paper.info.year) >= 2023)
+                  .forEach((paper, index) => {
+                const authors = Array.isArray(paper.info.authors.author) ? 
+                        paper.info.authors.author.map(a => a.text).join(', ') :
+                        paper.info.authors.author.text;
                 const paperHtml = `<div class="paper">
-                    <h3 onclick="searchTitle('${paper.info.title.replace(/'/g, "\\'")}')">${paper.info.title}</h3>
-                    <p>Authors: ${paper.info.authors.author.map(a => a.text).join(', ')}</p>
-                    <p>Venue: ${paper.info.venue}, Year: ${paper.info.year}</p>
-                    <button onclick="excludePaper(${index})">Exclude</button>
-                </div>`;
-                papersDisplay.innerHTML += paperHtml;
-            });
-        }
+                                        <h3 onclick="searchTitle('${paper.info.title.replace(/'/g, "\\'")}')">${paper.info.title}</h3>
+                                        <p>Authors: ${authors}</p>
+                                        <p>Venue: ${paper.info.venue}, Year: ${paper.info.year}</p>
+                                    </div>`;
+            papersDisplay.innerHTML += paperHtml;
+    });
+}
+        
+
         function filterExcludedPapers() {
             const excludedPapers = JSON.parse(localStorage.getItem('excludedPapers') || '[]');
             const filteredPapers = allPapers.filter(paper => 
