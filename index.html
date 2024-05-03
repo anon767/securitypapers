@@ -101,9 +101,11 @@ function displayPapers(papers) {
     papers.filter(paper => paper.info && paper.info.authors && paper.info.year && parseInt(paper.info.year) >= 2023).forEach((paper, index) => {
         let authors = '';
         if (paper.info.authors && paper.info.authors.author) {
-            authors = Array.isArray(paper.info.authors.author) ? 
-                        paper.info.authors.author.map(a => a.text).join(', ') :
-                        (paper.info.authors.author ? paper.info.authors.author.text : "");
+            if (Array.isArray(paper.info.authors.author)) {
+                authors = paper.info.authors.author.map(a => a.text).join(', ');
+            } else {
+                authors = paper.info.authors.author.text;
+            }
         }
         const paperHtml = `<div class="paper">
             <h3 onclick="searchTitle('${paper.info.title.replace(/'/g, "\\'")}')">${paper.info.title}</h3>
