@@ -53,6 +53,9 @@
         <option value="ccs">CCS</option>
         <option value="ndss">NDSS</option>
         <option value="uss">USENIX</option>
+        <option value="acsac">ACSAC</option>
+        <option value="sp">Euro S&P</option>
+        <option value="raid">RAID</option>
     </select>
     <button onclick="fetchPapers()">Fetch Papers</button>
     <input type="text" id="searchKeyword" placeholder="Enter keyword">
@@ -64,7 +67,10 @@
             sp: 'https://dblp.org/search/publ/api?q=stream%3Astreams%2Fconf%2Fsp%3A&h=1000&format=json',
             ccs: 'https://dblp.org/search/publ/api?q=stream%3Astreams%2Fconf%2Fccs%3A&h=1000&format=json',
             ndss: 'https://dblp.org/search/publ/api?q=stream%3Astreams%2Fconf%2Fndss%3A&h=1000&format=json',
-            uss: 'https://dblp.org/search/publ/api?q=stream%3Astreams%2Fconf%2Fuss%3A&h=1000&format=json'
+            uss: 'https://dblp.org/search/publ/api?q=stream%3Astreams%2Fconf%2Fuss%3A&h=1000&format=json',
+            acsac: 'https://dblp.org/search/publ/api?q=stream%3Astreams%2Fconf%2Facsac%3A&h=1000&format=json',
+            sp: 'https://dblp.org/search/publ/api?q=stream%3Astreams%2Fconf%2Feurosp%3A&h=1000&format=json',
+            raid: 'https://dblp.org/search/publ/api?q=stream%3Astreams%2Fconf%2Fraid%3A&h=1000&format=json'
         };
         let allPapers = [];
         function searchTitle(title) {
